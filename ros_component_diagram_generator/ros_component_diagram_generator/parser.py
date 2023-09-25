@@ -31,6 +31,11 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
         entity._Node__package = _to_string(context, entity._Node__package)
         entity._Node__node_executable = _to_string(context, entity._Node__node_executable)
 
+    if isinstance(entity, launch_ros.actions.SetParameter):
+        assert isinstance(entity, launch_ros.actions.SetParameter)
+        entity._MFC__param_name = _to_string(context, entity.name)
+        entity._Node__node_executable = _to_string(context, entity._Node__node_executable)
+
     if isinstance(entity, launch_ros.actions.LoadComposableNodes):
         nodes = []
         for n in entity._LoadComposableNodes__composable_node_descriptions:

@@ -18,8 +18,8 @@ ignore_container_classes = (
 
 ignore_classes = (
     launch_ros.actions.PushRosNamespace,
-    launch_ros.actions.SetParameter,
-    launch_ros.actions.SetRemap,
+    # launch_ros.actions.SetParameter,
+    # launch_ros.actions.SetRemap,
     launch.actions.DeclareLaunchArgument,
     launch.actions.PopEnvironment,
     launch.actions.PopEnvironment,

@@ -66,6 +66,10 @@ def get_component_style(entity: dict):
         return "#LightSkyBlue"
     if entity["type"] == "ExecuteProcess":
         return "#Wheat"
+    if entity["type"] == "SetParameter":
+        return "#Orange"
+    if entity["type"] == "SetRemap":
+        return "#Khaki"
     return "#Pink"
 
 

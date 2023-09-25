@@ -19,44 +19,6 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity):
         d["file_name"] = entity._get_launch_file().split("/")[-1]
         d["launch_description_source.location"] = entity.launch_description_source.location
 
-        # iterate over launch_arguments
-        d["launch_arguments count"] = len(entity.launch_arguments)
-
-        print("package: " + d["package"])
-        print("entity.launch_description_source.location: " + entity.launch_description_source.location)
-        print("launch_arguments count: " + str(len(entity.launch_arguments)))
-
-        for arg in entity.launch_arguments:
-            if type(arg[0]) is str:
-                if type(arg[1]) is str:
-                    print(arg[0] + ": " + arg[1])
-                # if type(arg[1]) is LaunchConfiguration:
-                #     x = arg[1]
-                #     assert isinstance(x, LaunchConfiguration)
-                #     for y in x.perform():
-                #         print(arg[0] + ": " + y)
-                else:
-                    print("!!!!!!!!!!!!" + type(arg[1]).__name__)
-            elif type(arg[0]) is list:
-                for whatisthis in arg[0]:
-                    if isinstance(whatisthis, TextSubstitution):
-                        print("-- " + whatisthis.text + ": " + whatisthis.describe())
-                    else:
-                        print("!!!!!!!!!!!!" + type(whatisthis).__name__)
-            else:
-                print("hmm...: " + type(arg[0]).__name__)
-
-        try:
-            str_args = str(entity.launch_arguments)
-        except:
-            str_args = "None"
-
-        # replace [] with {}
-        str_args = str_args.replace("[", "{")
-        str_args = str_args.replace("]", "}")
-
-        d["launch_arguments"] = str_args
-
     if type(entity) is launch.actions.GroupAction:
         assert isinstance(entity, launch.actions.GroupAction)
         d["scoped"] = entity._GroupAction__scoped
@@ -111,6 +73,28 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity):
     if type(entity) is launch.actions.ExecuteProcess:
         assert isinstance(entity, launch.actions.ExecuteProcess)
         d["name"] = entity.name
+
+    if type(entity) is launch_ros.actions.SetParameter:
+        assert isinstance(entity, launch_ros.actions.SetParameter)
+
+        aa = TextSubstitution.text("sds")
+        TextSubstitution.
+
+        d["name"] = entity.name
+
+        print("name: " + entity.name.)
+        print("main type: " + type(entity.))
+
+        if isinstance(entity.value, tuple):
+            for item in entity.value:
+                print("item type:" + type(item))
+                print("item:" + item)
+        else:
+            print("value_type: " + str(entity.value.value_type))
+            print("value: " + entity.value.value)
+
+
+        # d["value_type"] = entity.value.value_type
 
     return d
 
