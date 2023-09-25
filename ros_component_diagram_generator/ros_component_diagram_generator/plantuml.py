@@ -53,19 +53,19 @@ def get_component_id(entity: dict):
 
 def get_component_style(entity: dict):
     if entity["type"] == "IncludeLaunchDescription":
-        return "#LightGray"
+        return "#Salmon"
     if entity["type"] == "GroupAction":
-        return "#DarkGray"
+        return "#Pink"
     if entity["type"] == "ComposableNodeContainer":
-        return "#DarkSeaGreen"
+        return "#LemonChiffon"
     if entity["type"] == "LoadComposableNodes":
-        return "#GreenYellow"
+        return "#LightGreen"
     if entity["type"] == "ComposableNode":
-        return "#LightSkyBlue"
+        return "#PaleTurquoise"
     if entity["type"] == "Node":
-        return "#DeepSkyBlue"
+        return "#LightSkyBlue"
     if entity["type"] == "ExecuteProcess":
-        return "#MediumSlateBlue"
+        return "#Wheat"
     return "#Pink"
 
 
