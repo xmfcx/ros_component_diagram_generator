@@ -55,18 +55,18 @@ def get_component_style(entity: dict):
     if entity["type"] == "IncludeLaunchDescription":
         return "#LightGray"
     if entity["type"] == "GroupAction":
-        return "#DarkGray;line:Black;"
+        return "#DarkGray"
     if entity["type"] == "ComposableNodeContainer":
-        return "#DarkSeaGreen;line:Black;"
+        return "#DarkSeaGreen"
     if entity["type"] == "LoadComposableNodes":
-        return "#GreenYellow;line:Black;"
+        return "#GreenYellow"
     if entity["type"] == "ComposableNode":
-        return "#LightSkyBlue;line:Black;"
+        return "#LightSkyBlue"
     if entity["type"] == "Node":
-        return "#DeepSkyBlue;line:Black;"
+        return "#DeepSkyBlue"
     if entity["type"] == "ExecuteProcess":
-        return "#MediumSlateBlue;line:Black;"
-    return "#Pink;line:Red;"
+        return "#MediumSlateBlue"
+    return "#Pink"
 
 
 def create_entity_index_map(tree: dict):
