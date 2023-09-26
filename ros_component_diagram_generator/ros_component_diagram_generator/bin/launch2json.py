@@ -58,25 +58,31 @@ def _prepare(args):
 
 
 def main():
-    import json
-
     args = _parse_args()
     root_entity, launch_service = _prepare(args)
 
+    print("Creating raw_tree...")
     raw_tree = create_entity_tree(root_entity, launch_service)
+    print("Created raw_tree")
     filtered_tree = filter_entity_tree(raw_tree.copy())
+
+    print("Creating serializable_tree")
     serializable_tree = make_entity_tree_serializable(filtered_tree, launch_service.context)
+    print("Created serializable_tree")
 
     plantuml = generate_plantuml(serializable_tree)
+    print("Created plantuml")
 
     output_dir = Path("./output")
     output_dir.mkdir(exist_ok=True)
     with open(output_dir / "entity_tree.pu", "w") as f:
         f.write(plantuml)
 
-    # tmp
-    with open(output_dir / "entity_tree.json", "w") as f:
-        json.dump(serializable_tree, f, indent=2)
+    print("Finished")
+
+    # # tmp
+    # with open(output_dir / "entity_tree.json", "w") as f:
+    #     json.dump(serializable_tree, f, indent=2)
 
 
 if __name__ == "__main__":

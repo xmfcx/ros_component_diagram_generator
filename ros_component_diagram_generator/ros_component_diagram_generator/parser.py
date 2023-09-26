@@ -34,15 +34,18 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
     if isinstance(entity, launch_ros.actions.SetParameter):
         assert isinstance(entity, launch_ros.actions.SetParameter)
         entity._MFC__param_name = _to_string(context, entity.name)
-        entity._Node__node_executable = _to_string(context, entity._Node__node_executable)
 
     if isinstance(entity, launch_ros.actions.LoadComposableNodes):
         nodes = []
         for n in entity._LoadComposableNodes__composable_node_descriptions:
+            assert isinstance(n, launch_ros.descriptions.ComposableNode)
             n._ComposableNode__package = _to_string(context, n.package)
             n._ComposableNode__node_plugin = _to_string(context, n.node_plugin)
             n._ComposableNode__node_namespace = _to_string(context, n.node_namespace)
             n._ComposableNode__node_name = _to_string(context, n.node_name)
+            # n._ComposableNode__params = _to_string(context, n.parameters)
+            # n._ComposableNode__remaps = _to_string(context, n.remappings)
+
             nodes.append(n)
 
         return {
@@ -65,16 +68,17 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
 
 
 def create_entity_tree(
-    root_entity: launch.LaunchDescriptionEntity,
-    launch_service: launch.LaunchService,
+        root_entity: launch.LaunchDescriptionEntity,
+        launch_service: launch.LaunchService,
 ):
     import asyncio
     import logging
 
     loop = asyncio.get_event_loop()
     launch_service.context._set_asyncio_loop(loop)
-
+    print("parsing the entity tree")
     entity_tree = _parse_entity_tree(root_entity, launch_service.context)
+    print("parsed the entity tree")
 
     tasks = asyncio.all_tasks(loop)
     for task in tasks:
