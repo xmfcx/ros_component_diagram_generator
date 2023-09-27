@@ -67,6 +67,12 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         for i, param in enumerate(entity._ComposableNode__node_params_descs):
             d[f"param_desc_{i}"] = param
 
+        # entity.remappings is an iterable
+        # now iterate it
+        if entity.remappings is not None:
+            for i, remap in enumerate(entity.remappings):
+                print(i)
+
 
     if type(entity) is launch_ros.actions.Node:
         assert isinstance(entity, launch_ros.actions.Node)
