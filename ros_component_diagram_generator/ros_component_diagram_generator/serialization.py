@@ -60,48 +60,12 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_plugin"] = entity.node_plugin
         d["node_namespace"] = entity.node_namespace
         d["node_name"] = entity.node_name
-
-        import yaml
-
-        from launch_ros.utilities import evaluate_parameters
-
-        if entity.parameters is not None:
-            evaluated_parameters = evaluate_parameters(context, entity.parameters)
-            for params in evaluated_parameters:
-                if isinstance(params, dict):
-                    yaml_param = yaml.dump(params, default_flow_style=False)
-                    print(yaml_param)
-                elif isinstance(params, pathlib.Path):
-                    print("path: " + str(params))
-                elif isinstance(params, launch_ros.descriptions.Parameter):
-                    name, value = params.evaluate(context)
-                    print("name: " + str(name) + " value: " + str(value))
-                else:
-                    raise RuntimeError('invalid normalized parameters {}'.format(repr(params)))
-
-
-
-
-
-
-        #
-        # if entity.parameters is not None:
-        #     for i, param in enumerate(entity.parameters):
-        #         if isinstance(param, parameters_type.ParameterFile):
-        #             if(type(param.param_file) is pathlib.PosixPath):
-        #                 d[f"{i} - Param File: "] = str(param.param_file)
-        #             else:
-        #                 print("Couldn't handle the type: " + str(type(param.param_file)))
-        # #         # else:
-        # #         #     print("other type: " + str(type(param)))
-        #         elif isinstance(param, dict):
-        #             print(yaml.dump(evaluate_parameters_dict(context, param)))
-        #
-        # #             for key, value in param.items():
-        # #                 print("key: " + _to_string(context, key))
-        # #                 print("type_v: " + str(type(value)))
-        # #                 assert isinstance(value, parameters_type.ParameterValue)
-        # #                 # d[f"{i} - Param Dict: {key}"] = _to_string(context, value)
+        for i, param_file in enumerate(entity._ComposableNode__node_params_files):
+            d[f"param_file_{i}"] = param_file
+        for i, param_yaml in enumerate(entity._ComposableNode__node_params_params):
+            d[f"param_yaml_{i}"] = param_yaml
+        for i, param in enumerate(entity._ComposableNode__node_params_descs):
+            d[f"param_desc_{i}"] = param
 
 
     if type(entity) is launch_ros.actions.Node:

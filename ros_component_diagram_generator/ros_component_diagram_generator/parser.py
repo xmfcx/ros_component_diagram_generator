@@ -43,8 +43,38 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
             n._ComposableNode__node_plugin = _to_string(context, n.node_plugin)
             n._ComposableNode__node_namespace = _to_string(context, n.node_namespace)
             n._ComposableNode__node_name = _to_string(context, n.node_name)
-            # n._ComposableNode__params = _to_string(context, n.parameters)
-            # n._ComposableNode__remaps = _to_string(context, n.remappings)
+
+
+            import yaml
+            from pathlib import Path
+
+            from launch_ros.utilities import evaluate_parameters
+
+            n._ComposableNode__node_params_params = []
+            n._ComposableNode__node_params_files = []
+            n._ComposableNode__node_params_descs = []
+            if n.parameters is not None:
+                evaluated_parameters = evaluate_parameters(context, n.parameters)
+                for params in evaluated_parameters:
+
+                    if isinstance(params, dict):
+                        param_dict = {
+                            '/**':
+                                {'ros__parameters': params}
+                        }
+                        yaml_param = yaml.dump(param_dict, default_flow_style=False)
+                        n._ComposableNode__node_params_params.append(yaml_param)
+                        print(yaml_param)
+                    elif isinstance(params, Path):
+                        print("path: " + str(params))
+                        n._ComposableNode__node_params_files.append(str(params))
+                    elif isinstance(params, launch_ros.descriptions.Parameter):
+                        name, value = params.evaluate(context)
+                        str_thing = f'{name}:={yaml.dump(value)}'
+                        print(str_thing)
+                        n._ComposableNode__node_params_descs.append(str_thing)
+                    else:
+                        raise RuntimeError('invalid normalized parameters {}'.format(repr(params)))
 
             nodes.append(n)
 
