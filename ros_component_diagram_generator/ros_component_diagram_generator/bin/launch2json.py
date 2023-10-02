@@ -4,7 +4,6 @@ from rclpy.logging import get_logger
 
 from ros_component_diagram_generator.filter import filter_entity_tree
 from ros_component_diagram_generator.parser import create_entity_tree
-from ros_component_diagram_generator.plantuml import generate_plantuml
 from ros_component_diagram_generator.serialization import make_entity_tree_serializable
 
 logger = get_logger("launch2json")
@@ -34,7 +33,9 @@ def _parse_args():
     return parser.parse_args(args=argv)
 
 
-def _prepare(args):
+def main():
+    args = _parse_args()
+
     import launch
     from ros2launch.api.api import get_share_file_path_from_package
     from ros2launch.api.api import parse_launch_arguments
@@ -54,13 +55,6 @@ def _prepare(args):
         argv=parsed_launch_arguments, noninteractive=args.noninteractive, debug=args.debug
     )
 
-    return root_entity, launch_service
-
-
-def main():
-    args = _parse_args()
-    root_entity, launch_service = _prepare(args)
-
     print("Creating raw_tree...")
     raw_tree = create_entity_tree(root_entity, launch_service)
     print("Created raw_tree")
@@ -70,20 +64,22 @@ def main():
     serializable_tree = make_entity_tree_serializable(filtered_tree, launch_service.context)
     print("Created serializable_tree")
 
+    from ros_component_diagram_generator.plantuml import generate_plantuml
     plantuml = generate_plantuml(serializable_tree)
     print("Created plantuml")
+
+    from ros_component_diagram_generator.launch_maker import generate_launch_file
+    generated_launch_file = generate_launch_file(serializable_tree)
+    print("Generated the launch file")
 
     output_dir = Path("./output")
     output_dir.mkdir(exist_ok=True)
     with open(output_dir / "entity_tree.pu", "w") as f:
         f.write(plantuml)
+    with open(output_dir / "generated.launch.xml", "w") as f:
+        f.write(generated_launch_file)
 
     print("Finished")
-
-    # # tmp
-    # with open(output_dir / "entity_tree.json", "w") as f:
-    #     json.dump(serializable_tree, f, indent=2)
-
 
 if __name__ == "__main__":
     main()

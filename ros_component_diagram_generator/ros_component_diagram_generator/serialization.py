@@ -67,11 +67,16 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         for i, param in enumerate(entity._ComposableNode__node_params_descs):
             d[f"param_desc_{i}"] = param
 
-        # entity.remappings is an iterable
-        # now iterate it
-        if entity.remappings is not None:
-            for i, remap in enumerate(entity.remappings):
-                print(i)
+        if entity.remap_rules is not None:
+            d["component_remaps"] = []
+            for i, remap in enumerate(entity.remap_rules):
+                d[f"remap_{i}"] = remap
+                d["component_remaps"].append(remap)
+        if entity.remap_rules_global is not None:
+            d["remap_rules_global"] = []
+            for i, remap in enumerate(entity.remap_rules_global):
+                d[f"remap_{i}"] = remap
+                d["component_remaps_global"].append(remap)
 
 
     if type(entity) is launch_ros.actions.Node:
