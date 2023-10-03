@@ -14,17 +14,28 @@ This jinja2 template is for generating a launch file.
                      name="{{ entity.node_name }}"
                      namespace="{{ entity.node_namespace }}">
       {%- if entity.component_remaps_global is defined %}
+      
       <!-- global remaps -->
       {%- endif %}
       {%- for remap_rule in entity.component_remaps_global %}
       <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
       {%- endfor %}
       {%- if entity.component_remaps is defined %}
+
       <!-- remaps -->
       {%- endif %}
       {%- for remap_rule in entity.component_remaps %}
       <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
       {%- endfor %}
+      {%- if entity.launch_params_dicts is defined %}
+
+      <!-- parameter dictionary -->
+      {%- for launch_params_dict in entity.launch_params_dicts %}
+      {%- for param_name, value in launch_params_dict.items() %}
+      <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+      {%- endfor %}
+      {%- endfor %}
+      {%- endif %}
     </composable_node>
   </load_composable_node>
 {% endif %}

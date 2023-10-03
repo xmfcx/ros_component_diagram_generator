@@ -43,6 +43,13 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_plugin"] = entity.node_plugin
         d["node_namespace"] = entity.node_namespace
         d["node_name"] = entity.node_name
+
+        d["launch_params_files"] = entity.launch_params_file
+        d["launch_params_dicts"] = entity.launch_params_dict
+        d["launch_params_desc"] = entity.launch_params_desc
+
+
+
         for i, param_file in enumerate(entity.launch_params_file):
             d[f"param_file_{i}"] = param_file
         for i, param_yaml in enumerate(entity.launch_params_dict):
@@ -57,7 +64,7 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
             import yaml
             name, value = param
             str_thing = f'{name}:={yaml.dump(value)}'
-            d[f"param_desc_{i}"] = param
+            d[f"param_desc_{i}"] = str_thing
 
         if entity.remap_rules is not None:
             d["component_remaps"] = []
