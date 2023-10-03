@@ -6,7 +6,7 @@
 ===
 {% for k, v in entity.items() -%}
 {% if k not in ["type"] -%}
-{{ k }}: {{ v }}
+{{ k }}: "{{ v|replace("[", "\[")|replace("]", "\]") }}"
 ---
 {% endif -%}
 {% endfor -%}

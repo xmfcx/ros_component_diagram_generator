@@ -1,29 +1,12 @@
 import pathlib
 
-from numpy.testing._private.parameterized import param
-
 import launch
 import launch_ros
-from launch_ros import parameters_type
-from launch.substitutions import TextSubstitution
-from launch.substitutions import LaunchConfiguration
 from rclpy.logging import get_logger
 
 logger = get_logger("launch2json")
 
 from typing import Text
-
-
-def _to_string(context: launch.LaunchContext,
-               substitutions: launch.some_substitutions_type.SomeSubstitutionsType) -> Text:
-    from launch.utilities import normalize_to_list_of_substitutions
-    from launch.utilities import perform_substitutions
-
-    if substitutions is None:
-        substitutions = ""
-
-    return perform_substitutions(context, normalize_to_list_of_substitutions(substitutions))
-
 
 def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: launch.LaunchContext):
     import re
@@ -60,11 +43,20 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_plugin"] = entity.node_plugin
         d["node_namespace"] = entity.node_namespace
         d["node_name"] = entity.node_name
-        for i, param_file in enumerate(entity._ComposableNode__node_params_files):
+        for i, param_file in enumerate(entity.launch_params_file):
             d[f"param_file_{i}"] = param_file
-        for i, param_yaml in enumerate(entity._ComposableNode__node_params_params):
-            d[f"param_yaml_{i}"] = param_yaml
-        for i, param in enumerate(entity._ComposableNode__node_params_descs):
+        for i, param_yaml in enumerate(entity.launch_params_dict):
+            param_dict = {
+                '/**':
+                    {'ros__parameters': param_yaml}
+            }
+            import yaml
+            yaml_param = yaml.dump(param_dict, default_flow_style=False)
+            d[f"param_yaml_{i}"] = yaml_param
+        for i, param in enumerate(entity.launch_params_desc):
+            import yaml
+            name, value = param
+            str_thing = f'{name}:={yaml.dump(value)}'
             d[f"param_desc_{i}"] = param
 
         if entity.remap_rules is not None:

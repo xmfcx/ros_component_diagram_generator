@@ -64,13 +64,13 @@ def main():
     serializable_tree = make_entity_tree_serializable(filtered_tree, launch_service.context)
     print("Created serializable_tree")
 
-    from ros_component_diagram_generator.plantuml import generate_plantuml
-    plantuml = generate_plantuml(serializable_tree)
-    print("Created plantuml")
-
     from ros_component_diagram_generator.launch_maker import generate_launch_file
     generated_launch_file = generate_launch_file(serializable_tree)
     print("Generated the launch file")
+
+    from ros_component_diagram_generator.plantuml import generate_plantuml
+    plantuml = generate_plantuml(serializable_tree)
+    print("Created plantuml")
 
     output_dir = Path("./output")
     output_dir.mkdir(exist_ok=True)

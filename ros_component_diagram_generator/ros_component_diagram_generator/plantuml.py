@@ -113,6 +113,21 @@ def generate_plantuml(serializable_tree: dict):
     for i, e in enumerate(entities):
         e["id"] = i
 
+    def escape_plantuml_brackets(string):
+        """Escapes the [ and ] characters in a string for use in PlantUML."""
+        return string.replace("[", "\\[").replace("]", "\\]")
+
+    def escape_plantuml_brackets_in_dict(entities):
+        """Escapes the [ and ] characters in all strings in a dictionary."""
+        for key, value in entities.items():
+            if isinstance(value, str):
+                entities[key] = escape_plantuml_brackets(value)
+            elif isinstance(value, dict):
+                escape_plantuml_brackets_in_dict(value)
+
+    for entity in entities:
+        escape_plantuml_brackets_in_dict(entity)
+
     index_map = create_entity_index_map(serializable_tree)
 
     return template.render(

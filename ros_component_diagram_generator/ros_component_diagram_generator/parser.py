@@ -68,59 +68,27 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
             # print("node_plugin: " + _to_string(context, n.node_plugin))
             # print("package: " + _to_string(context, n.package))
 
-            import yaml
             from pathlib import Path
 
             from launch_ros.utilities import evaluate_parameters
 
-            n._ComposableNode__node_params_params = []
-            n._ComposableNode__node_params_files = []
-            n._ComposableNode__node_params_descs = []
+            from typing import Dict, List
+            n.launch_params_file = []  # type: List[str]
+            n.launch_params_dict = []  # type: List[Dict]
+            n.launch_params_desc = []  # type List[Tuple[str, str]]
+
             if n.parameters is not None:
                 evaluated_parameters = evaluate_parameters(context, n.parameters)
                 for params in evaluated_parameters:
-
-                    if isinstance(params, dict):
-                        param_dict = {
-                            '/**':
-                                {'ros__parameters': params}
-                        }
-                        yaml_param = yaml.dump(param_dict, default_flow_style=False)
-                        n._ComposableNode__node_params_params.append(yaml_param)
-                        # print(yaml_param)
-                    elif isinstance(params, Path):
-                        # print("path: " + str(params))
-                        n._ComposableNode__node_params_files.append(str(params))
+                    if isinstance(params, Path):
+                        n.launch_params_file.append(str(params))
+                    elif isinstance(params, dict):
+                        n.launch_params_dict.append(params)
                     elif isinstance(params, launch_ros.descriptions.Parameter):
                         name, value = params.evaluate(context)
-                        str_thing = f'{name}:={yaml.dump(value)}'
-                        # print(str_thing)
-                        n._ComposableNode__node_params_descs.append(str_thing)
+                        n.launch_params_desc.append((name, value))
                     else:
                         raise RuntimeError('invalid normalized parameters {}'.format(repr(params)))
-
-
-            # # print("type rem: " + str(type(n.remappings)))
-            # if n.remappings is None:
-            #     # print("n.remappings is None")
-            #     pass
-            # else:
-            #     # print("n.remappings is Wow")
-            #     for remapping in n.remap_rules:
-            #         print("remap: " + remapping)
-            # # for param in n.parameters_mfc:
-            # #     print("param: " + str(param))
-
-
-
-
-            # from launch_ros.actions import load_composable_nodes
-            #
-            # request = load_composable_nodes.get_composable_node_load_request(n, context)
-            #
-            # print("request.remap_rules count: " + str(len(request.remap_rules)))
-
-
 
             nodes.append(n)
 
