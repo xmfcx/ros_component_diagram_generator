@@ -58,40 +58,7 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
         nodes = []
         for n in entity._LoadComposableNodes__composable_node_descriptions:
             assert isinstance(n, launch_ros.descriptions.ComposableNode)
-            n._ComposableNode__package = _to_string(context, n.package)
-            n._ComposableNode__node_plugin = _to_string(context, n.node_plugin)
-            n._ComposableNode__node_namespace = _to_string(context, n.node_namespace)
-            n._ComposableNode__node_name = _to_string(context, n.node_name)
-
-            # print("node_name: " + _to_string(context, n.node_name))
-            # print("node_namespace: " + _to_string(context, n.node_namespace))
-            # print("node_plugin: " + _to_string(context, n.node_plugin))
-            # print("package: " + _to_string(context, n.package))
-
-            from pathlib import Path
-
-            from launch_ros.utilities import evaluate_parameters
-
-            from typing import Dict, List
-            n.launch_params_file = []  # type: List[str]
-            n.launch_params_dict = []  # type: List[Dict]
-            n.launch_params_desc = []  # type List[Tuple[str, str]]
-
-            if n.parameters is not None:
-                evaluated_parameters = evaluate_parameters(context, n.parameters)
-                for params in evaluated_parameters:
-                    if isinstance(params, Path):
-                        n.launch_params_file.append(str(params))
-                    elif isinstance(params, dict):
-                        n.launch_params_dict.append(params)
-                    elif isinstance(params, launch_ros.descriptions.Parameter):
-                        name, value = params.evaluate(context)
-                        n.launch_params_desc.append((name, value))
-                    else:
-                        raise RuntimeError('invalid normalized parameters {}'.format(repr(params)))
-
             nodes.append(n)
-
         return {
             "entity": entity,
             "children": nodes,

@@ -39,41 +39,47 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
 
     if type(entity) is launch_ros.descriptions.ComposableNode:
         assert isinstance(entity, launch_ros.descriptions.ComposableNode)
-        d["package"] = entity.package
-        d["node_plugin"] = entity.node_plugin
-        d["node_namespace"] = entity.node_namespace
-        d["node_name"] = entity.node_name
+        d["package"] = entity.final_attributes.package
+        d["node_plugin"] = entity.final_attributes.node_plugin
+        d["node_namespace"] = entity.final_attributes.node_namespace
+        d["node_name"] = entity.final_attributes.node_name
+        d["target_container"] = entity.final_attributes.target_container
 
-        d["launch_params_files"] = entity.launch_params_file
-        d["launch_params_dicts"] = entity.launch_params_dict
-        d["launch_params_desc"] = entity.launch_params_desc
+        if entity.final_attributes.params_files is not None:
+            d["params_files"] = entity.final_attributes.params_files
 
+            for i, param_file in enumerate(entity.final_attributes.params_files):
+                d[f"param_file_{i}"] = param_file
 
+        if entity.final_attributes.params_dicts is not None:
+            d["params_dicts"] = entity.final_attributes.params_dicts
 
-        for i, param_file in enumerate(entity.launch_params_file):
-            d[f"param_file_{i}"] = param_file
-        for i, param_yaml in enumerate(entity.launch_params_dict):
-            param_dict = {
-                '/**':
-                    {'ros__parameters': param_yaml}
-            }
-            import yaml
-            yaml_param = yaml.dump(param_dict, default_flow_style=False)
-            d[f"param_yaml_{i}"] = yaml_param
-        for i, param in enumerate(entity.launch_params_desc):
-            import yaml
-            name, value = param
-            str_thing = f'{name}:={yaml.dump(value)}'
-            d[f"param_desc_{i}"] = str_thing
+            for i, param_yaml in enumerate(entity.final_attributes.params_dicts):
+                param_dict = {
+                    '/**':
+                        {'ros__parameters': param_yaml}
+                }
+                import yaml
+                yaml_param = yaml.dump(param_dict, default_flow_style=False)
+                d[f"param_yaml_{i}"] = yaml_param
 
-        if entity.remap_rules is not None:
+        if entity.final_attributes.params_descs is not None:
+            d["params_descs"] = entity.final_attributes.params_descs
+
+            for i, param in enumerate(entity.final_attributes.params_descs):
+                import yaml
+                name, value = param
+                str_thing = f'{name}:={yaml.dump(value)}'
+                d[f"param_desc_{i}"] = str_thing
+
+        if entity.final_attributes.remap_rules is not None:
             d["component_remaps"] = []
-            for i, remap in enumerate(entity.remap_rules):
+            for i, remap in enumerate(entity.final_attributes.remap_rules):
                 d[f"remap_{i}"] = remap
                 d["component_remaps"].append(remap)
-        if entity.remap_rules_global is not None:
-            d["remap_rules_global"] = []
-            for i, remap in enumerate(entity.remap_rules_global):
+        if entity.final_attributes.remap_rules_global is not None:
+            d["component_remaps_global"] = []
+            for i, remap in enumerate(entity.final_attributes.remap_rules_global):
                 d[f"remap_{i}"] = remap
                 d["component_remaps_global"].append(remap)
 
