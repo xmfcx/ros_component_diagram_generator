@@ -86,30 +86,63 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
 
     if type(entity) is launch_ros.actions.Node:
         assert isinstance(entity, launch_ros.actions.Node)
-        d["node_package"] = entity.node_package
-        d["node_executable"] = entity.node_executable
-        d["expanded_node_namespace"] = entity.expanded_node_namespace
-        d["name"] = entity.name
-        d["node_name"] = entity.node_name
-        #
-        # try:
-        #     str_remapping_rules = str(set(entity.expanded_remapping_rules))
-        # except:
-        #     str_remapping_rules = "None"
-        #
-        # d["expanded_remapping_rules"] = str_remapping_rules
-        # # print(entity.env)
-        # # d["env"] = entity.env
-        # # d["additional_env"] = entity.additional_env
-        #
-        # str_command = str(entity.cmd)
-        # # replace [] with {}
-        # str_command = str_command.replace("[", "{")
-        # str_command = str_command.replace("]", "}")
+        d["package"] = entity.final_attributes.package
+        d["node_namespace"] = entity.final_attributes.node_namespace
+        d["node_name"] = entity.final_attributes.node_name
+        d["node_executable"] = entity.final_attributes.node_executable
 
-        # print(str_command)
-        # d["cmd"] = "<back:white><font:Courier New>" + str_command + "</font></back>"
-        # # d["cwd"] = entity.cwd
+        if entity.final_attributes.params_files is not None:
+            d["params_files"] = entity.final_attributes.params_files
+
+            for i, param_file in enumerate(entity.final_attributes.params_files):
+                d[f"param_file_{i}"] = param_file
+
+        if entity.final_attributes.params_dicts is not None:
+            for param_dict in entity.final_attributes.params_dicts:
+                for key, value in param_dict.items():
+                    if type(value) is not str:
+                        continue
+                    if "xml version=" in value:
+                        import xml.sax.saxutils as saxutils
+                        escaped_xml = saxutils.escape(value)
+                        param_dict[key] = escaped_xml
+
+            d["params_dicts"] = entity.final_attributes.params_dicts
+
+            for i, param_yaml in enumerate(entity.final_attributes.params_dicts):
+                param_dict = {
+                    '/**':
+                        {'ros__parameters': param_yaml}
+                }
+                import yaml
+                yaml_param = yaml.dump(param_dict, default_flow_style=False)
+                d[f"param_yaml_{i}"] = yaml_param
+
+        if entity.final_attributes.params_descs is not None:
+            d["params_descs"] = entity.final_attributes.params_descs
+
+            for i, param in enumerate(entity.final_attributes.params_descs):
+                import yaml
+                name, value = param
+                str_thing = f'{name}:={yaml.dump(value)}'
+                d[f"param_desc_{i}"] = str_thing
+
+        if entity.final_attributes.params_global_tuples is not None:
+            d["params_global_tuples"] = entity.final_attributes.params_global_tuples
+
+        if entity.final_attributes.params_global_files is not None:
+            d["params_global_files"] = entity.final_attributes.params_global_files
+
+        if entity.final_attributes.remap_rules is not None:
+            d["component_remaps"] = []
+            for i, remap in enumerate(entity.final_attributes.remap_rules):
+                d[f"remap_{i}"] = remap
+                d["component_remaps"].append(remap)
+        if entity.final_attributes.remap_rules_global is not None:
+            d["component_remaps_global"] = []
+            for i, remap in enumerate(entity.final_attributes.remap_rules_global):
+                d[f"remap_{i}"] = remap
+                d["component_remaps_global"].append(remap)
 
     if type(entity) is launch.actions.ExecuteProcess:
         assert isinstance(entity, launch.actions.ExecuteProcess)
