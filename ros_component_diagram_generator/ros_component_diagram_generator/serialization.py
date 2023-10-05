@@ -30,7 +30,7 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_package"] = entity.node_package
         d["node_executable"] = entity.node_executable
         d["expanded_node_namespace"] = entity.expanded_node_namespace
-        d["node_name"] = entity.node_name
+        d["node_name"] = entity.node_name.split(entity.expanded_node_namespace + "/")[-1]
         d["name"] = entity.name
 
     if type(entity) is launch_ros.actions.LoadComposableNodes:

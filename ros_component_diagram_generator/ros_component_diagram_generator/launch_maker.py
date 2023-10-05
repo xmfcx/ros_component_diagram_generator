@@ -110,6 +110,10 @@ def generate_launch_file(serializable_tree: dict):
     template = Template(template_text)
 
     entities = _get_all_entities(serializable_tree)
+
+    # sort entities by their types
+    entities = sorted(entities, key=lambda e: get_component_kind(e))
+
     for i, e in enumerate(entities):
         e["id"] = i
 

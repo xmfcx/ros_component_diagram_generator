@@ -6,8 +6,18 @@ This jinja2 template is for generating a launch file.
 #}
 
 {%- for entity in entities %}
+
+{%- if entity.type == "ComposableNodeContainer" %}
+  <!-- {{ entity.expanded_node_namespace }}/{{ entity.node_name }} -->
+  <node_container pkg="{{ entity.node_package }}"
+                  exec="{{ entity.node_executable }}"
+                  name="{{ entity.node_name }}"
+                  namespace="{{ entity.expanded_node_namespace }}"/>
+{% endif %}
+
+
 {%- if entity.type == "ComposableNode" %}
-  <!-- doing {{ entity.node_name }} ... -->
+  <!-- {{ entity.node_namespace }}/{{ entity.node_name }} -->
   <load_composable_node target="{{ entity.target_container }}">
     <composable_node pkg="{{ entity.package }}"
                      plugin="{{ entity.node_plugin }}"
@@ -63,6 +73,8 @@ This jinja2 template is for generating a launch file.
     </composable_node>
   </load_composable_node>
 {% endif %}
+
+
 {%- endfor %}
 
 </launch>
