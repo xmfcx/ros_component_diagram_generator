@@ -55,7 +55,7 @@ This jinja2 template is for generating a launch file.
       <!-- parameter dictionary -->
       {%- for params_dict in entity.params_dicts %}
       {%- for param_name, value in params_dict.items() %}
-      <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+      <param name="{{ param_name }}" value="{{ value | format_param }}" />
       {%- endfor %}
       {%- endfor %}
       {%- endif %}
@@ -66,7 +66,7 @@ This jinja2 template is for generating a launch file.
       <!-- parameter descriptions -->
       {%- for params_desc in entity.params_descs %}
       {%- set param_name, value = params_desc %}
-      <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+      <param name="{{ param_name }}" value="{{ value | format_param }}" />
       {%- endfor %}
       {%- endif %}
     </composable_node>
@@ -79,7 +79,12 @@ This jinja2 template is for generating a launch file.
   <node pkg="{{ entity.package }}"
         exec="{{ entity.node_executable }}"
         name="{{ entity.node_name }}"
-        namespace="{{ entity.node_namespace }}">
+        namespace="{{ entity.node_namespace }}"
+        {%- if entity.arguments is defined %}
+        args="{{ entity.arguments | join(" ") }}"
+        {%- endif %}
+        >
+    
     {%- if entity.component_remaps_global is defined %}
 
     <!-- global remaps -->
@@ -111,7 +116,7 @@ This jinja2 template is for generating a launch file.
     <!-- parameter tuples global -->
     {%- for param_tuple in entity.params_global_tuples %}
     {%- set param_name, value = param_tuple %}
-    <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+    <param name="{{ param_name }}" value="{{ value | format_param }}" />
     {%- endfor %}
     {%- endif %}
 
@@ -130,7 +135,7 @@ This jinja2 template is for generating a launch file.
     <!-- parameter dictionary -->
     {%- for params_dict in entity.params_dicts %}
     {%- for param_name, value in params_dict.items() %}
-    <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+    <param name="{{ param_name }}" value="{{ value | format_param }}" />
     {%- endfor %}
     {%- endfor %}
     {%- endif %}
@@ -141,7 +146,7 @@ This jinja2 template is for generating a launch file.
     <!-- parameter descriptions -->
     {%- for params_desc in entity.params_descs %}
     {%- set param_name, value = params_desc %}
-    <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
+    <param name="{{ param_name }}" value="{{ value | format_param }}" />
     {%- endfor %}
     {%- endif %}
 

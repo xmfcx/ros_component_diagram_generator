@@ -90,6 +90,9 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_name"] = entity.final_attributes.node_name
         d["node_executable"] = entity.final_attributes.node_executable
 
+        if entity.final_attributes.arguments is not None:
+            d["arguments"] = entity.final_attributes.arguments
+
         if entity.final_attributes.params_files is not None:
             d["params_files"] = entity.final_attributes.params_files
 
@@ -102,9 +105,15 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
                     if type(value) is not str:
                         continue
                     if "xml version=" in value:
-                        import xml.sax.saxutils as saxutils
-                        escaped_xml = saxutils.escape(value)
-                        param_dict[key] = escaped_xml
+                        xml_content = value
+                        xml_file_path = 'output/xml_file.xml'  # Adjust the path and filename as necessary
+
+                        # 1. Write the XML into a file
+                        with open(xml_file_path, 'w') as xml_file:
+                            xml_file.write(xml_content)
+                        import os
+                        # 2. Put the location of the file into the `param_dict`
+                        param_dict[key] = os.path.abspath(xml_file_path)
 
             d["params_dicts"] = entity.final_attributes.params_dicts
 

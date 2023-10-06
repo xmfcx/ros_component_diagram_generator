@@ -1,5 +1,4 @@
 from ament_index_python.packages import get_package_share_path
-from jinja2 import Template
 from rclpy.logging import get_logger
 
 logger = get_logger("launch2json")
@@ -107,23 +106,40 @@ def get_children(index_map: dict, entity: dict):
 def generate_launch_file(serializable_tree: dict):
     share = get_package_share_path("ros_component_diagram_generator")
     template_text = (share / "templates" / "launch_generated.jinja2").read_text()
-    template = Template(template_text)
 
     entities = _get_all_entities(serializable_tree)
 
     # sort entities by their types
     entities = sorted(entities, key=lambda e: get_component_kind(e))
 
-    for i, e in enumerate(entities):
-        e["id"] = i
+    def format_param(value):
+        # If value is a float, format without scientific notation
+        if isinstance(value, float):
+            formatted_value = '{:f}'.format(value)
+            # If there's a decimal point and trailing zeros
+            if '.' in formatted_value:
+                # Remove all but one trailing zero and then remove trailing dots, if any
+                formatted_value = formatted_value.rstrip('0')
+                if formatted_value[-1] != '0':
+                    formatted_value += '0'
+                formatted_value = formatted_value.rstrip('.')
+            value = formatted_value
 
-    index_map = create_entity_index_map(serializable_tree)
+        # For other types (assuming they can be converted to strings with str())
+        value = str(value)
 
-    # Target items are:
-    # - ComposableNode
-    # - Node
-    # - ComposableNodeContainer
-    # - SetParameter
+        # Replace parentheses with brackets
+        value = value.replace("(", "[").replace(")", "]")
+
+        return value
+
+    from jinja2 import Environment
+    env = Environment(
+        loader=None  # No loader since we're providing the template string directly
+    )
+    env.filters['format_param'] = format_param
+
+    template = env.from_string(template_text)
 
     return template.render(
         {
