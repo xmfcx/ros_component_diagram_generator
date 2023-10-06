@@ -23,20 +23,20 @@ This jinja2 template is for generating a launch file.
                      plugin="{{ entity.node_plugin }}"
                      name="{{ entity.node_name }}"
                      namespace="{{ entity.node_namespace }}">
-      {%- if entity.component_remaps_global is defined %}
+      {%- if entity.remap_rules_global is defined %}
 
       <!-- global remaps -->
       {%- endif %}
-      {%- for remap_rule in entity.component_remaps_global %}
+      {%- for remap_rule in entity.remap_rules_global %}
       <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
       {%- endfor %}
 
 
-      {%- if entity.component_remaps is defined %}
+      {%- if entity.remap_rules is defined %}
 
       <!-- remaps -->
       {%- endif %}
-      {%- for remap_rule in entity.component_remaps %}
+      {%- for remap_rule in entity.remap_rules %}
       <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
       {%- endfor %}
 
@@ -85,19 +85,19 @@ This jinja2 template is for generating a launch file.
         {%- endif %}
         >
     
-    {%- if entity.component_remaps_global is defined %}
+    {%- if entity.remap_rules_global is defined %}
 
     <!-- global remaps -->
     {%- endif %}
-    {%- for remap_rule in entity.component_remaps_global %}
+    {%- for remap_rule in entity.remap_rules_global %}
     <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
     {%- endfor %}
 
-    {%- if entity.component_remaps is defined %}
+    {%- if entity.remap_rules is defined %}
 
     <!-- remaps -->
     {%- endif %}
-    {%- for remap_rule in entity.component_remaps %}
+    {%- for remap_rule in entity.remap_rules %}
     <remap from="{{ remap_rule[0] }}" to="{{ remap_rule[1] }}" />
     {%- endfor %}
 

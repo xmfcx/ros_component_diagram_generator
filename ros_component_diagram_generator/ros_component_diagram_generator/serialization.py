@@ -47,40 +47,20 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         if entity.final_attributes.params_files is not None:
             d["params_files"] = entity.final_attributes.params_files
 
-            for i, param_file in enumerate(entity.final_attributes.params_files):
-                d[f"param_file_{i}"] = param_file
-
         if entity.final_attributes.params_dicts is not None:
             d["params_dicts"] = entity.final_attributes.params_dicts
-
-            for i, param_yaml in enumerate(entity.final_attributes.params_dicts):
-                param_dict = {
-                    '/**':
-                        {'ros__parameters': param_yaml}
-                }
-                import yaml
-                yaml_param = yaml.dump(param_dict, default_flow_style=False)
-                d[f"param_yaml_{i}"] = yaml_param
 
         if entity.final_attributes.params_descs is not None:
             d["params_descs"] = entity.final_attributes.params_descs
 
-            for i, param in enumerate(entity.final_attributes.params_descs):
-                import yaml
-                name, value = param
-                str_thing = f'{name}:={yaml.dump(value)}'
-                d[f"param_desc_{i}"] = str_thing
-
         if entity.final_attributes.remap_rules is not None:
-            d["component_remaps"] = []
+            d["remap_rules"] = []
             for i, remap in enumerate(entity.final_attributes.remap_rules):
-                d[f"remap_{i}"] = remap
-                d["component_remaps"].append(remap)
+                d["remap_rules"].append(remap)
         if entity.final_attributes.remap_rules_global is not None:
-            d["component_remaps_global"] = []
+            d["remap_rules_global"] = []
             for i, remap in enumerate(entity.final_attributes.remap_rules_global):
-                d[f"remap_{i}"] = remap
-                d["component_remaps_global"].append(remap)
+                d["remap_rules_global"].append(remap)
 
 
     if type(entity) is launch_ros.actions.Node:
@@ -95,9 +75,6 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
 
         if entity.final_attributes.params_files is not None:
             d["params_files"] = entity.final_attributes.params_files
-
-            for i, param_file in enumerate(entity.final_attributes.params_files):
-                d[f"param_file_{i}"] = param_file
 
         if entity.final_attributes.params_dicts is not None:
             for param_dict in entity.final_attributes.params_dicts:
@@ -117,23 +94,8 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
 
             d["params_dicts"] = entity.final_attributes.params_dicts
 
-            for i, param_yaml in enumerate(entity.final_attributes.params_dicts):
-                param_dict = {
-                    '/**':
-                        {'ros__parameters': param_yaml}
-                }
-                import yaml
-                yaml_param = yaml.dump(param_dict, default_flow_style=False)
-                d[f"param_yaml_{i}"] = yaml_param
-
         if entity.final_attributes.params_descs is not None:
             d["params_descs"] = entity.final_attributes.params_descs
-
-            for i, param in enumerate(entity.final_attributes.params_descs):
-                import yaml
-                name, value = param
-                str_thing = f'{name}:={yaml.dump(value)}'
-                d[f"param_desc_{i}"] = str_thing
 
         if entity.final_attributes.params_global_tuples is not None:
             d["params_global_tuples"] = entity.final_attributes.params_global_tuples
@@ -142,15 +104,13 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
             d["params_global_files"] = entity.final_attributes.params_global_files
 
         if entity.final_attributes.remap_rules is not None:
-            d["component_remaps"] = []
+            d["remap_rules"] = []
             for i, remap in enumerate(entity.final_attributes.remap_rules):
-                d[f"remap_{i}"] = remap
-                d["component_remaps"].append(remap)
+                d["remap_rules"].append(remap)
         if entity.final_attributes.remap_rules_global is not None:
-            d["component_remaps_global"] = []
+            d["remap_rules_global"] = []
             for i, remap in enumerate(entity.final_attributes.remap_rules_global):
-                d[f"remap_{i}"] = remap
-                d["component_remaps_global"].append(remap)
+                d["remap_rules_global"].append(remap)
 
     if type(entity) is launch.actions.ExecuteProcess:
         assert isinstance(entity, launch.actions.ExecuteProcess)

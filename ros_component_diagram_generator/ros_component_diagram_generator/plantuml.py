@@ -53,7 +53,7 @@ def get_component_id(entity: dict):
 
 def get_component_style(entity: dict):
     if entity["type"] == "IncludeLaunchDescription":
-        return "#Salmon"
+        return "#LightSalmon"
     if entity["type"] == "GroupAction":
         return "#Pink"
     if entity["type"] == "ComposableNodeContainer":
@@ -127,6 +127,16 @@ def generate_plantuml(serializable_tree: dict):
 
     for entity in entities:
         escape_plantuml_brackets_in_dict(entity)
+        list_keys_to_remove = []
+        for key, value in entity.items():
+            if "param" in key:
+                list_keys_to_remove.append(key)
+            elif "remap_rules" in key:
+                list_keys_to_remove.append(key)
+            elif "arguments" in key:
+                list_keys_to_remove.append(key)
+        for key in list_keys_to_remove:
+            del entity[key]
 
     index_map = create_entity_index_map(serializable_tree)
 
