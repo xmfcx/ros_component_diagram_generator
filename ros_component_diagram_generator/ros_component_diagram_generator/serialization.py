@@ -27,11 +27,10 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
 
     if type(entity) is launch_ros.actions.ComposableNodeContainer:
         assert isinstance(entity, launch_ros.actions.ComposableNodeContainer)
-        d["node_package"] = entity.node_package
-        d["node_executable"] = entity.node_executable
-        d["expanded_node_namespace"] = entity.expanded_node_namespace
-        d["node_name"] = entity.node_name.split(entity.expanded_node_namespace + "/")[-1]
-        d["name"] = entity.name
+        d["node_package"] = entity.final_attributes.package
+        d["node_executable"] = entity.final_attributes.node_executable
+        d["expanded_node_namespace"] = entity.final_attributes.node_namespace
+        d["node_name"] = entity.node_name.split(entity.final_attributes.node_namespace + "/")[-1]
 
     if type(entity) is launch_ros.actions.LoadComposableNodes:
         assert isinstance(entity, launch_ros.actions.LoadComposableNodes)

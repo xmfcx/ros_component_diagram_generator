@@ -36,19 +36,7 @@ def _parse_entity_tree(entity: launch.LaunchDescriptionEntity, context: launch.L
         logger.warn(f"error in {entity.__class__}: {e}")
 
     if isinstance(entity, launch_ros.actions.Node):
-        entity._Node__package = _to_string(context, entity._Node__package)
-        entity._Node__node_executable = _to_string(context, entity._Node__node_executable)
-        entity._Node__node_name = _to_string(context, entity.node_name)
-
-        # print("node_name: " + entity._Node__node_name)
-        #
-        # if entity.expanded_remapping_rules is not None:
-        #     for i, remap in enumerate(entity.expanded_remapping_rules):
-        #         # from launch_ros import remap_rule_type
-        #         # remap_rule_type.RemapRule
-        #         item_1 = _to_string(context, remap[0])
-        #         item_2 = _to_string(context, remap[1])
-        #         print(f"remap: {item_1}:={item_2}")
+        assert isinstance(entity, launch_ros.actions.Node)
 
     if isinstance(entity, launch_ros.actions.SetParameter):
         assert isinstance(entity, launch_ros.actions.SetParameter)

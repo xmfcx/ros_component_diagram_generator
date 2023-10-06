@@ -130,7 +130,7 @@ This jinja2 template is for generating a launch file.
     <!-- parameter dictionary -->
     {%- for params_dict in entity.params_dicts %}
     {%- for param_name, value in params_dict.items() %}
-    <param name="{{ param_name }}" value='{{ value | replace("(", "[") | replace(")", "]") }}' />
+    <param name="{{ param_name }}" value="{{ value | replace("(", "[") | replace(")", "]") }}" />
     {%- endfor %}
     {%- endfor %}
     {%- endif %}
