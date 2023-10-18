@@ -30,7 +30,7 @@ def _make_entity_serializable(entity: launch.LaunchDescriptionEntity, context: l
         d["node_package"] = entity.final_attributes.package
         d["node_executable"] = entity.final_attributes.node_executable
         d["expanded_node_namespace"] = entity.final_attributes.node_namespace
-        d["node_name"] = entity.node_name.split(entity.final_attributes.node_namespace + "/")[-1]
+        d["node_name"] = entity.node_name.split("/")[-1]
 
     if type(entity) is launch_ros.actions.LoadComposableNodes:
         assert isinstance(entity, launch_ros.actions.LoadComposableNodes)
