@@ -112,6 +112,17 @@ def generate_launch_file(serializable_tree: dict):
     # sort entities by their types
     entities = sorted(entities, key=lambda e: get_component_kind(e))
 
+    counts = {}
+
+    for entity in entities:
+        type = entity["type"]
+        if type not in counts:
+            counts[type] = 0
+        counts[type] += 1
+
+    for type, count in counts.items():
+        print(f"{type}: {count}")
+
     def format_param(value):
         # If value is a float, format without scientific notation
         if isinstance(value, float):
